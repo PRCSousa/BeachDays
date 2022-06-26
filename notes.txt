@@ -1,1 +1,0 @@
-1. Get info from OpenWeather API: https://realpython.com/build-a-python-weather-app-cli/
