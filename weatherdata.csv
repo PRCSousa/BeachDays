@@ -1,0 +1,2 @@
+desc, temperature, pressure, humidity, wind_str, wind_deg, beachday?
+few clouds,20.49,1017,83,2.06,290,False
