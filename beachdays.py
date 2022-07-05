@@ -18,6 +18,7 @@ BASE_API_URL = "http://api.openweathermap.org/data/2.5/weather"
 
 # Functions
 
+
 def city_checker():
 
     # Verifies if a city has been saved in the city.txt file or not
@@ -88,31 +89,42 @@ def api_to_cvs_data(weather_data, beachday):
 
     return csv_data
 
+
 def save_to_csv(weather_data, beachday):
 
-    # Write into the csv file the previously prepared data using the csv module
+    # Write into the csv file the previously prepared data using the csv module, in case it exists
+    # If not, we create the file, write the header and then the data
 
-    weathercsv = open("weatherdata.csv", "a", newline='')
-    writer = csv.writer(weathercsv)
-    writer.writerow(api_to_cvs_data(weather_data, beachday))
-    weathercsv.close()
+    if os.path.exists("weather.csv"):
+        weathercsv = open("weatherdata.csv", "a", newline='')
+        writer = csv.writer(weathercsv)
+        writer.writerow(api_to_cvs_data(weather_data, beachday))
+        weathercsv.close()
+    else:
+        weathercsv = open("weatherdata.csv", "w", newline='')
+        writer = csv.writer(weathercsv)
+        writer.writerow(["description", "daytime", "temperature",
+                        "pressure", "humidity", "wind_str", "wind_deg", "beachday"])
+        writer.writerow(api_to_cvs_data(weather_data, beachday))
+        weathercsv.close()
+
 
 def api_to_dataframe(weather_data):
 
     # Gotta be sure to make a dictionary with the syntax: {'column': value (inside a list)}
 
     df_data = {
-        'desc' : [weather_data['weather'][0]['description']],
-        'daytime' : [weather_data['dt']],
-        'temperature' : [weather_data['main']['temp']],
-        'pressure' : [weather_data['main']['pressure']],
-        'humidity' : [weather_data['main']['humidity']],
-        'wind_str'  :[weather_data['wind']['speed']],
-        'wind_deg' : [weather_data['wind']['deg']]
-        }
+        'desc': [weather_data['weather'][0]['description']],
+        'daytime': [weather_data['dt']],
+        'temperature': [weather_data['main']['temp']],
+        'pressure': [weather_data['main']['pressure']],
+        'humidity': [weather_data['main']['humidity']],
+        'wind_str': [weather_data['wind']['speed']],
+        'wind_deg': [weather_data['wind']['deg']]
+    }
 
     # So when converting the dictionary into a dataframe, it will be in the desired format
-    
+
     df_data = pd.DataFrame(df_data)
 
     return df_data
@@ -164,9 +176,9 @@ if __name__ == "__main__":
 
             beachdaypred = predictBeachDay(weather_data)
 
-            if beachdaypred: 
-                print("It's a beach day! Enjoy!") 
-            else: 
+            if beachdaypred:
+                print("It's a beach day! Enjoy!")
+            else:
                 print("Not one of the best days :c")
             break
 
@@ -177,7 +189,7 @@ if __name__ == "__main__":
             print('Be sure to write "Yes" or "No".')
 
     # Now ask if it is a beach day or not, and if so, save it in the csv file for future predictions
-            
+
     while True:
 
         beachday = input("Is it a beach day? (Yes of No): ")
