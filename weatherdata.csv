@@ -1,3 +1,2 @@
-desc, temperature, pressure, humidity, wind_str, wind_deg, beachday?
-few clouds,20.49,1017,83,2.06,290,False
-few clouds,24.2,1017,67,2.06,280,True
+desc, daytime, temperature, pressure, humidity, wind_str, wind_deg, beachday?
+clear sky,1657062437,20.85,1018,74,1.54,350,True
