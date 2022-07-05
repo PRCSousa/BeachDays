@@ -24,7 +24,9 @@ def loadPreprocessData():
     weatherEncoded['desc'] = (encoder.fit_transform(weatherEncoded['desc']))
     weatherEncoded['beachday?'] = weatherEncoded['beachday?'].astype(int)
 
-    return weatherEncoded
+    # Let's return the encoder aswell so we can use it to encode the weather we want to predict for today
+
+    return weatherEncoded, encoder
 
 def modelTraining(weatherEncoded):
 
