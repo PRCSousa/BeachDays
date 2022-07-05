@@ -3,7 +3,6 @@
 
 # It takes a city and an optional flag to display the output in celsius or fahrenheit as input;
 # We call a weather API to fetch the specified city weather data;
-# Display the city, aswell as some weather conditions;
 # We save the fetched data into a CSV file for model training;
 
 import json
@@ -85,11 +84,17 @@ def predictBeachDay(weather_data):
 
     # Function to load and preprocess dataset
 
+    weatherEncoded = predictionModel.loadPreprocessData()
+
     # Function that calls and fits the prediction model
+
+    DecisionModel = predictionModel.modelTraining(weatherEncoded)
 
     # Function that predicts with the weather_data of today
 
-    return #True or False for a good or worse beach day
+    prediction = DecisionModel.predict(weather_data) # Work in progress
+
+    return prediction # Boolean
 
 
 if __name__ == "__main__":
