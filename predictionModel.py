@@ -10,7 +10,7 @@ def loadPreprocessData():
     # Importing Beach Dataset
 
     weatherdata = pd.read_csv('weatherdata.csv', sep=',')
-    weatherdata.columns = ['desc', 'temperature', 'pressure',
+    weatherdata.columns = ['desc', 'daytime', 'temperature', 'pressure',
                            'humidity', 'wind_str', 'wind_deg', 'beachday?']
 
     # Dropping Lines With Missing Values

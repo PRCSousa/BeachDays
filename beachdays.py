@@ -95,16 +95,16 @@ def save_to_csv(weather_data, beachday):
     # Write into the csv file the previously prepared data using the csv module, in case it exists
     # If not, we create the file, write the header and then the data
 
-    if os.path.exists("weather.csv"):
+    if(os.path.exists("weatherdata.csv")):
         weathercsv = open("weatherdata.csv", "a", newline='')
         writer = csv.writer(weathercsv)
         writer.writerow(api_to_cvs_data(weather_data, beachday))
         weathercsv.close()
     else:
-        weathercsv = open("weatherdata.csv", "w", newline='')
+        weathercsv = open("weatherdata.csv", "a", newline='')
         writer = csv.writer(weathercsv)
-        writer.writerow(["description", "daytime", "temperature",
-                        "pressure", "humidity", "wind_str", "wind_deg", "beachday"])
+        writer.writerow(["desc", "daytime", "temperature",
+                        "pressure", "humidity", "wind_str", "wind_deg", "beachday?"])
         writer.writerow(api_to_cvs_data(weather_data, beachday))
         weathercsv.close()
 
@@ -196,12 +196,12 @@ if __name__ == "__main__":
 
         if (beachday == 'Yes'):
             save_to_csv(weather_data, True)
-            print("Data saved for future predictions!.")
+            print("Data saved for future predictions!")
             break
 
         elif (beachday == 'No'):
             save_to_csv(weather_data, False)
-            print("Data saved for future predictions!.")
+            print("Data saved for future predictions!")
             break
 
         else:
