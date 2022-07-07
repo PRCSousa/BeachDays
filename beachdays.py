@@ -130,26 +130,31 @@ def api_to_dataframe(weather_data):
     return df_data
 
 
-def predictBeachDay(weather_data):
+def checkFileLines():
 
-    # Convert today's data into a dataframe
+    if(not os.path.exists("weatherdata.csv")):
+        weathercsv = open("weatherdata.csv", "a", newline='')
+        writer = csv.writer(weathercsv)
+        writer.writerow(["desc", "daytime", "temperature",
+                        "pressure", "humidity", "wind_str", "wind_deg", "beachday?"])
+        weathercsv.close()
+
+    file = open("weatherdata.csv", "r")
+    reader = csv.reader(file)
+    lines = len(list(reader))
+    return lines
+
+
+def predictBeachDay(weather_data):
 
     df_data = api_to_dataframe(weather_data)
 
-    # Function to load and preprocess dataset (we return the encoder to encode today's data in the same manner)
-
     weatherEncoded, encoder = predictionModel.loadPreprocessData()
-
-    # Function that calls and fits the prediction model
 
     DecisionModel = predictionModel.modelTraining(weatherEncoded)
 
-    # Encode today's data
-
     df_data['desc'] = encoder.fit_transform(df_data['desc'])
-
-    # We predict if today is a beach day or not and return a boolean value
-
+    
     prediction = DecisionModel.predict(df_data)
 
     return prediction
@@ -173,8 +178,14 @@ if __name__ == "__main__":
         testday = input('Want to predict if it is a beach day? (Yes or No): ')
 
         if (testday == 'Yes'):
+            
+            lines = checkFileLines()
 
-            beachdaypred = predictBeachDay(weather_data)
+            if lines < 11:
+                print("You need at least 10 days of data to predict a beach day.")
+                break
+            else:
+                beachdaypred = predictBeachDay(weather_data)
 
             if beachdaypred:
                 print("It's a beach day! Enjoy!")
@@ -189,10 +200,11 @@ if __name__ == "__main__":
             print('Be sure to write "Yes" or "No".')
 
     # Now ask if it is a beach day or not, and if so, save it in the csv file for future predictions
+    # If we answer NA, we don't save the data
 
     while True:
 
-        beachday = input("Is it a beach day? (Yes of No): ")
+        beachday = input("Is it a beach day? (Yes, No or NA): ")
 
         if (beachday == 'Yes'):
             save_to_csv(weather_data, True)
@@ -203,6 +215,10 @@ if __name__ == "__main__":
             save_to_csv(weather_data, False)
             print("Data saved for future predictions!")
             break
+        
+        elif (beachday == 'NA'):
+            print("See you next time!")
+            break
 
         else:
-            print('Be sure to write "Yes" or "No".')
+            print('Be sure to write "Yes", "No" or "NA".')
