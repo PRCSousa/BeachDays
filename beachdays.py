@@ -95,18 +95,17 @@ def save_to_csv(weather_data, beachday):
     # Write into the csv file the previously prepared data using the csv module, in case it exists
     # If not, we create the file, write the header and then the data
 
-    if(os.path.exists("weatherdata.csv")):
+    if(not os.path.exists("weatherdata.csv")):
         weathercsv = open("weatherdata.csv", "a", newline='')
         writer = csv.writer(weathercsv)
-        writer.writerow(api_to_cvs_data(weather_data, beachday))
+        writer.writerow(["desc", "daytime", "temperature", "pressure",
+                        "humidity", "wind_str", "wind_deg", "beachday?"])
         weathercsv.close()
-    else:
-        weathercsv = open("weatherdata.csv", "a", newline='')
-        writer = csv.writer(weathercsv)
-        writer.writerow(["desc", "daytime", "temperature",
-                        "pressure", "humidity", "wind_str", "wind_deg", "beachday?"])
-        writer.writerow(api_to_cvs_data(weather_data, beachday))
-        weathercsv.close()
+
+    weathercsv = open("weatherdata.csv", "a", newline='')
+    writer = csv.writer(weathercsv)
+    writer.writerow(api_to_cvs_data(weather_data, beachday))
+    weathercsv.close()
 
 
 def api_to_dataframe(weather_data):
@@ -154,7 +153,7 @@ def predictBeachDay(weather_data):
     DecisionModel = predictionModel.modelTraining(weatherEncoded)
 
     df_data['desc'] = encoder.fit_transform(df_data['desc'])
-    
+
     prediction = DecisionModel.predict(df_data)
 
     return prediction
@@ -178,7 +177,7 @@ if __name__ == "__main__":
         testday = input('Want to predict if it is a beach day? (Yes or No): ')
 
         if (testday == 'Yes'):
-            
+
             lines = checkFileLines()
 
             if lines < 11:
@@ -215,7 +214,7 @@ if __name__ == "__main__":
             save_to_csv(weather_data, False)
             print("Data saved for future predictions!")
             break
-        
+
         elif (beachday == 'NA'):
             print("See you next time!")
             break
