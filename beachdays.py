@@ -28,17 +28,15 @@ def datachecker():
 
 def city_checker(user):
 
-    # Verifies if a city has been saved in the city.txt file or not
+
     file = (f"data\\usercities\\{user}city.txt")
     if(os.path.exists(file)):
         city = get_city(file)
     else:
         city = "None"
 
-    # If the file doesn't exist, we ask the user to enter a city and save it in the city.txt file
-
     while True:
-        answer = input(f"Actual City: {city}\nWant to change city? (Yes/No): ")
+        answer = input(f"Current City: {city}\nWant to change city? (Yes/No): ")
         if(answer == "Yes"):
             city = input("What city do you want to predict beach days? ")
             cityfile = open(file, "w")
@@ -56,8 +54,6 @@ def city_checker(user):
 
 def get_city(file):
 
-    # Read the city from the city.txt file and return it
-
     cityfile = open(file, "r")
     city = cityfile.read()
     cityfile.close()
@@ -73,7 +69,7 @@ def user_checker():
         user = "None"
 
     while True:
-        answer = input(f"Actual User: {user}\nWant to change user? (Yes/No): ")
+        answer = input(f"Current User: {user}\nWant to change user? (Yes/No): ")
         if(answer == "Yes"):
             user = input("What user do you want to predict beach days? ")
             userfile = open("data\\user.txt", "w")
