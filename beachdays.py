@@ -19,35 +19,83 @@ BASE_API_URL = "http://api.openweathermap.org/data/2.5/weather"
 # Functions
 
 
-def city_checker():
+def datachecker():
+    if not os.path.exists("data"):
+        os.makedirs("data")
+        os.makedirs("data\\usercities")
+    return
+
+
+def city_checker(user):
 
     # Verifies if a city has been saved in the city.txt file or not
-
-    if(os.path.exists("city.txt")):
-        return get_city()
+    file = (f"data\\usercities\\{user}city.txt")
+    if(os.path.exists(file)):
+        city = get_city(file)
+    else:
+        city = "None"
 
     # If the file doesn't exist, we ask the user to enter a city and save it in the city.txt file
 
-    else:
-        city = input("What city do you want to predict beach days?\n")
-        cityfile = open("city.txt", "w")
-        cityfile.write(city)
-        cityfile.close()
+    while True:
+        answer = input(f"Actual City: {city}\nWant to change city? (Yes/No): ")
+        if(answer == "Yes"):
+            city = input("What city do you want to predict beach days? ")
+            cityfile = open(file, "w")
+            city = city.replace(" ", "")
+            cityfile.write(city)
+            cityfile.close()
+            return get_city(file)
 
-    # Then we return whatever city is in the file
+        elif(answer == "No"):
+            return get_city(file)
 
-    return get_city()
+        else:
+            print('Be sure to write "Yes" or "No".')
 
 
-def get_city():
+def get_city(file):
 
     # Read the city from the city.txt file and return it
 
-    cityfile = open("city.txt", "r")
+    cityfile = open(file, "r")
     city = cityfile.read()
     cityfile.close()
 
     return city
+
+
+def user_checker():
+
+    if(os.path.exists("data\\user.txt")):
+        user = get_user()
+    else:
+        user = "None"
+
+    while True:
+        answer = input(f"Actual User: {user}\nWant to change user? (Yes/No): ")
+        if(answer == "Yes"):
+            user = input("What user do you want to predict beach days? ")
+            userfile = open("data\\user.txt", "w")
+            user = user.replace(" ", "")
+            userfile.write(user)
+            userfile.close()
+            return get_user()
+
+        elif(answer == "No"):
+            return get_user()
+
+        else:
+            print('Be sure to write "Yes" or "No".')
+
+
+def get_user():
+
+    userfile = open("data\\user.txt", "r")
+    user = userfile.read()
+    userfile.close()
+
+    return user
 
 
 def weather_query(city):
@@ -90,22 +138,22 @@ def api_to_cvs_data(weather_data, beachday):
     return csv_data
 
 
-def save_to_csv(weather_data, beachday):
+def save_to_csv(weather_data, weatherdatacsv, beachday):
 
     # Write into the csv file the previously prepared data using the csv module, in case it exists
     # If not, we create the file, write the header and then the data
 
-    if(not os.path.exists("weatherdata.csv")):
-        weathercsv = open("weatherdata.csv", "a", newline='')
-        writer = csv.writer(weathercsv)
+    if(not os.path.exists(weatherdatacsv)):
+        file = open(weatherdatacsv, "a", newline='')
+        writer = csv.writer(file)
         writer.writerow(["desc", "daytime", "temperature", "pressure",
                         "humidity", "wind_str", "wind_deg", "beachday?"])
-        weathercsv.close()
+        file.close()
 
-    weathercsv = open("weatherdata.csv", "a", newline='')
-    writer = csv.writer(weathercsv)
+    file = open(weatherdatacsv, "a", newline='')
+    writer = csv.writer(file)
     writer.writerow(api_to_cvs_data(weather_data, beachday))
-    weathercsv.close()
+    file.close()
 
 
 def api_to_dataframe(weather_data):
@@ -129,26 +177,27 @@ def api_to_dataframe(weather_data):
     return df_data
 
 
-def checkFileLines():
+def checkFileLines(weatherdatacsv):
 
-    if(not os.path.exists("weatherdata.csv")):
-        weathercsv = open("weatherdata.csv", "a", newline='')
+    if(not os.path.exists(weatherdatacsv)):
+        weathercsv = open(weatherdatacsv, "a", newline='')
         writer = csv.writer(weathercsv)
         writer.writerow(["desc", "daytime", "temperature",
                         "pressure", "humidity", "wind_str", "wind_deg", "beachday?"])
         weathercsv.close()
 
-    file = open("weatherdata.csv", "r")
+    file = open(weatherdatacsv, "r")
     reader = csv.reader(file)
     lines = len(list(reader))
     return lines
 
 
-def predictBeachDay(weather_data):
+def predictBeachDay(weather_data, weatherdatacsv):
 
     df_data = api_to_dataframe(weather_data)
 
-    weatherEncoded, encoder = predictionModel.loadPreprocessData()
+    weatherEncoded, encoder = predictionModel.loadPreprocessData(
+        weatherdatacsv)
 
     DecisionModel = predictionModel.modelTraining(weatherEncoded)
 
@@ -161,9 +210,12 @@ def predictBeachDay(weather_data):
 
 if __name__ == "__main__":
 
-    # Get the city from the city.txt file or ask the user to enter a city
-
-    city = city_checker()
+    datachecker()
+    user = user_checker()
+    city = city_checker(user)
+    if (not os.path.exists(f"data\{user}weatherfiles")):
+        os.makedirs(f"data\{user}weatherfiles")
+    weatherdatacsv = (f"data\{user}weatherfiles\{city}weatherdata.csv")
 
     # Get the weather data from the API
 
@@ -178,13 +230,13 @@ if __name__ == "__main__":
 
         if (testday == 'Yes'):
 
-            lines = checkFileLines()
+            lines = checkFileLines(weatherdatacsv)
 
             if lines < 11:
                 print("You need at least 10 days of data to predict a beach day.")
                 break
             else:
-                beachdaypred = predictBeachDay(weather_data)
+                beachdaypred = predictBeachDay(weather_data, weatherdatacsv)
 
             if beachdaypred:
                 print("It's a beach day! Enjoy!")
@@ -206,12 +258,12 @@ if __name__ == "__main__":
         beachday = input("Is it a beach day? (Yes, No or NA): ")
 
         if (beachday == 'Yes'):
-            save_to_csv(weather_data, True)
+            save_to_csv(weather_data, weatherdatacsv, True)
             print("Data saved for future predictions!")
             break
 
         elif (beachday == 'No'):
-            save_to_csv(weather_data, False)
+            save_to_csv(weather_data, weatherdatacsv, False)
             print("Data saved for future predictions!")
             break
 

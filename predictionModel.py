@@ -3,14 +3,13 @@ import numpy as np
 import sklearn.preprocessing as sklp
 import sklearn.model_selection as skms
 import sklearn.tree as sktree
-import pickle
 
 
-def loadPreprocessData():
+def loadPreprocessData(weatherdatacsv):
 
     # Importing Beach Dataset
 
-    weatherdata = pd.read_csv('weatherdata.csv', sep=',')
+    weatherdata = pd.read_csv(weatherdatacsv, sep=',')
     weatherdata.columns = ['desc', 'daytime', 'temperature', 'pressure',
                            'humidity', 'wind_str', 'wind_deg', 'beachday?']
 
@@ -59,10 +58,6 @@ def modelTraining(weatherEncoded):
 
     DecisionModel = sktree.DecisionTreeClassifier(criterion = "gini", max_leaf_nodes= treeHighestAccurracyLeafSize, random_state= 0, max_depth= 5)
     DecisionModel.fit(X_train, Y_train)
-
-    # Save the model in a pickle file for probable future use
-
-    pickle.dump(DecisionModel, open('DecisionModel.pkl', 'wb'))
 
     # Returning the model to predict today's weather
 
