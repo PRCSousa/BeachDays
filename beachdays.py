@@ -37,8 +37,10 @@ def city_checker(user):
 
     while True:
         answer = input(f"Current City: {city}\nWant to change city? (Yes/No): ")
+        print('')
         if(answer == "Yes"):
-            city = input("What city do you want to predict beach days? ")
+            city = input("City: ")
+            print('\n')
             cityfile = open(file, "w")
             city = city.replace(" ", "")
             cityfile.write(city)
@@ -70,8 +72,10 @@ def user_checker():
 
     while True:
         answer = input(f"Current User: {user}\nWant to change user? (Yes/No): ")
+        print('')
         if(answer == "Yes"):
-            user = input("What user do you want to predict beach days? ")
+            user = input("Username: ")
+            print('\n')
             userfile = open("data\\user.txt", "w")
             user = user.replace(" ", "")
             userfile.write(user)
@@ -222,7 +226,8 @@ if __name__ == "__main__":
 
     while True:
 
-        testday = input('Want to predict if it is a beach day? (Yes or No): ')
+        testday = input('Want to predict if it is a beach day? (Yes/No): ')
+        print('')
 
         if (testday == 'Yes'):
 
@@ -230,6 +235,7 @@ if __name__ == "__main__":
 
             if lines < 11:
                 print("You need at least 10 days of data to predict a beach day.")
+                print('')
                 break
             else:
                 beachdaypred = predictBeachDay(weather_data, weatherdatacsv)
@@ -245,13 +251,15 @@ if __name__ == "__main__":
 
         else:
             print('Be sure to write "Yes" or "No".')
+            print('')
 
     # Now ask if it is a beach day or not, and if so, save it in the csv file for future predictions
     # If we answer NA, we don't save the data
 
     while True:
 
-        beachday = input("Is it a beach day? (Yes, No or NA): ")
+        beachday = input("Is it a beach day? (Yes/No/NA): ")
+        print('')
 
         if (beachday == 'Yes'):
             save_to_csv(weather_data, weatherdatacsv, True)
@@ -269,3 +277,4 @@ if __name__ == "__main__":
 
         else:
             print('Be sure to write "Yes", "No" or "NA".')
+            print('')
