@@ -4,6 +4,7 @@ import json
 import os
 import csv
 import sys
+import datetime
 import pandas as pd
 from urllib import error, request
 
@@ -126,6 +127,7 @@ def api_to_cvs_data(weather_data, beachday):
     # We pick the data we want to save in the csv file, make it into a list return it
 
     csv_data = [
+        datetime.date.today(),
         weather_data['weather'][0]['description'],
         weather_data['dt'],
         weather_data['main']['temp'],
@@ -146,7 +148,7 @@ def save_to_csv(weather_data, weatherdatacsv, beachday):
     if(not os.path.exists(weatherdatacsv)):
         file = open(weatherdatacsv, "a", newline='')
         writer = csv.writer(file)
-        writer.writerow(["desc", "daytime", "temperature", "pressure",
+        writer.writerow(["day", "desc", "daytime", "temperature", "pressure",
                         "humidity", "wind_str", "wind_deg", "beachday?"])
         file.close()
 
@@ -159,8 +161,8 @@ def save_to_csv(weather_data, weatherdatacsv, beachday):
 def api_to_dataframe(weather_data):
 
     # Gotta be sure to make a dictionary with the syntax: {'column': value (inside a list)}
-
     df_data = {
+        'day': datetime.date.today(),
         'desc': [weather_data['weather'][0]['description']],
         'daytime': [weather_data['dt']],
         'temperature': [weather_data['main']['temp']],
@@ -182,7 +184,7 @@ def checkFileLines(weatherdatacsv):
     if(not os.path.exists(weatherdatacsv)):
         weathercsv = open(weatherdatacsv, "a", newline='')
         writer = csv.writer(weathercsv)
-        writer.writerow(["desc", "daytime", "temperature",
+        writer.writerow(["day", "desc", "daytime", "temperature",
                         "pressure", "humidity", "wind_str", "wind_deg", "beachday?"])
         weathercsv.close()
 
@@ -202,6 +204,8 @@ def predictBeachDay(weather_data, weatherdatacsv):
     DecisionModel = predictionModel.modelTraining(weatherEncoded)
 
     df_data['desc'] = encoder.fit_transform(df_data['desc'])
+
+    df_data = df_data.drop("day", axis=1)
 
     prediction = DecisionModel.predict(df_data)
 

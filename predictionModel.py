@@ -10,11 +10,12 @@ def loadPreprocessData(weatherdatacsv):
     # Importing Beach Dataset
 
     weatherdata = pd.read_csv(weatherdatacsv, sep=',')
-    weatherdata.columns = ['desc', 'daytime', 'temperature', 'pressure',
+    weatherdata.columns = ['day', 'desc', 'daytime', 'temperature', 'pressure',
                            'humidity', 'wind_str', 'wind_deg', 'beachday?']
 
-    # Dropping Lines With Missing Values
+    # Dropping Lines With Missing Values and Pointless Columns
 
+    weatherdata = weatherdata.drop("day", axis=1)
     weatherdata = weatherdata.dropna()
 
     # Encoding Categorical Values
